@@ -12,6 +12,18 @@ class HtmlCreator {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
 
+        Enumeration<String> contextParametersNames = servlet.getServletContext().getInitParameterNames();
+        String firstContextParameterName = contextParametersNames.nextElement();
+        String firstContextParameterValue = servlet.getServletContext().getInitParameter(firstContextParameterName);
+        String secondContextParameterName = contextParametersNames.nextElement();
+        String secondContextParameterValue = servlet.getServletContext().getInitParameter(secondContextParameterName);
+
+        Enumeration<String> servletParametersNames = servlet.getInitParameterNames();
+        String firstServletParameterName = servletParametersNames.nextElement();
+        String firstServletParameterValue = servlet.getInitParameter(firstServletParameterName);
+        String secondServletParameterName = servletParametersNames.nextElement();
+        String secondServletParameterValue = servlet.getInitParameter(secondServletParameterName);
+
         writer.println("""
                 <!DOCTYPE html>
                 <html lang="en">
@@ -39,70 +51,28 @@ class HtmlCreator {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>
-                """);
-
-        Enumeration<String> contextParametersNames = servlet.getServletContext().getInitParameterNames();
-        String contextParameterName = contextParametersNames.nextElement();
-
-        writer.println(contextParameterName);
-        writer.println("""
-                        </td>
-                        <td>
-                """);
-        writer.println(servlet.getServletContext().getInitParameter(contextParameterName));
-        writer.println("""
-                        </td>
+                        <td>%s</td>
+                        <td>%s</td>
                     </tr>
                     <tr>
-                        <td>
-                """);
-
-        contextParameterName = contextParametersNames.nextElement();
-
-        writer.println(contextParameterName);
-        writer.println("""
-                        </td>
-                        <td>
-                """);
-        writer.println(servlet.getServletContext().getInitParameter(contextParameterName));
-        writer.println("""
-                        </td>
+                        <td>%s</td>
+                        <td>%s</td>
                     </tr>
                     <tr>
-                        <td>
-                """);
-
-        Enumeration<String> servletParametersNames = servlet.getInitParameterNames();
-        String servletParameterName = servletParametersNames.nextElement();
-
-        writer.println(servletParameterName);
-        writer.println("""
-                        </td>
-                        <td>
-                """);
-        writer.println(servlet.getInitParameter(servletParameterName));
-        writer.println("""
-                        </td>
+                        <td>%s</td>
+                        <td>%s</td>
                     </tr>
                     <tr>
-                        <td>
-                """);
-
-        servletParameterName = servletParametersNames.nextElement();
-        writer.println(servletParameterName);
-        writer.println("""
-                        </td>
-                        <td>
-                """);
-        writer.println(servlet.getInitParameter(servletParameterName));
-        writer.println("""
-                        </td>
+                        <td>%s</td>
+                        <td>%s</td>
                     </tr>
                     </tbody>
                 </table>
                 </body>
                 </html>
-                """);
+                """.formatted(firstContextParameterName, firstContextParameterValue,
+                secondContextParameterName, secondContextParameterValue,
+                firstServletParameterName, firstServletParameterValue,
+                secondServletParameterName, secondServletParameterValue));
     }
 }
