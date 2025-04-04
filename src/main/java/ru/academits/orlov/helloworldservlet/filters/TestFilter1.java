@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
 
-@WebFilter(urlPatterns = {"/servlet1", "/servlet2"})
+@WebFilter("/*")
 public class TestFilter1 extends HttpFilter {
     @Serial
     private static final long serialVersionUID = 3L;

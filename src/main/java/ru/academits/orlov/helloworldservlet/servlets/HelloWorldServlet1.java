@@ -25,6 +25,7 @@ public class HelloWorldServlet1 extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("text/html");
         resp.getWriter().println("The servlet 1 POST request was successfully completed.");
     }
 }

@@ -1,28 +1,42 @@
 package ru.academits.orlov.helloworldservlet.servlets;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 class HtmlCreator {
-    static void performGetRequest(HttpServlet servlet, HttpServletResponse resp) throws IOException {
+    protected static void performGetRequest(HttpServlet servlet, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
 
-        Enumeration<String> contextParametersNames = servlet.getServletContext().getInitParameterNames();
-        String firstContextParameterName = contextParametersNames.nextElement();
-        String firstContextParameterValue = servlet.getServletContext().getInitParameter(firstContextParameterName);
-        String secondContextParameterName = contextParametersNames.nextElement();
-        String secondContextParameterValue = servlet.getServletContext().getInitParameter(secondContextParameterName);
+        List<String> parametersNamesList = new ArrayList<>();
+        List<String> parametersValuesList = new ArrayList<>();
+
+        ServletContext servletContext = servlet.getServletContext();
+        Enumeration<String> contextParametersNames = servletContext.getInitParameterNames();
+
+        while (contextParametersNames.hasMoreElements()) {
+            String parameterName = contextParametersNames.nextElement();
+
+            parametersNamesList.add(StringEscapeUtils.escapeHtml4(parameterName));
+            parametersValuesList.add(StringEscapeUtils.escapeHtml4(servletContext.getInitParameter(parameterName)));
+        }
 
         Enumeration<String> servletParametersNames = servlet.getInitParameterNames();
-        String firstServletParameterName = servletParametersNames.nextElement();
-        String firstServletParameterValue = servlet.getInitParameter(firstServletParameterName);
-        String secondServletParameterName = servletParametersNames.nextElement();
-        String secondServletParameterValue = servlet.getInitParameter(secondServletParameterName);
+
+        while (servletParametersNames.hasMoreElements()) {
+            String parameterName = servletParametersNames.nextElement();
+
+            parametersNamesList.add(StringEscapeUtils.escapeHtml4(parameterName));
+            parametersValuesList.add(StringEscapeUtils.escapeHtml4(servlet.getInitParameter(parameterName)));
+        }
 
         writer.println("""
                 <!DOCTYPE html>
@@ -36,6 +50,7 @@ class HtmlCreator {
                             border-collapse: collapse;
                             padding: 5px;
                         }
+                
                         th {
                             font-weight: bold;
                         }
@@ -70,9 +85,9 @@ class HtmlCreator {
                 </table>
                 </body>
                 </html>
-                """.formatted(firstContextParameterName, firstContextParameterValue,
-                secondContextParameterName, secondContextParameterValue,
-                firstServletParameterName, firstServletParameterValue,
-                secondServletParameterName, secondServletParameterValue));
+                """.formatted(parametersNamesList.getFirst(), parametersValuesList.getFirst(),
+                parametersNamesList.get(1), parametersValuesList.get(1),
+                parametersNamesList.get(2), parametersValuesList.get(2),
+                parametersNamesList.get(3), parametersValuesList.get(3)));
     }
 }
