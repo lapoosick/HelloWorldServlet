@@ -14,7 +14,8 @@ class HtmlCreator {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
 
-        Map<String, String> parameters = new HashMap<>();
+        Map<String, String> contextParameters = new HashMap<>();
+        Map<String, String> servletParameters = new HashMap<>();
 
         ServletContext servletContext = servlet.getServletContext();
         Enumeration<String> contextParametersNames = servletContext.getInitParameterNames();
@@ -22,7 +23,7 @@ class HtmlCreator {
         while (contextParametersNames.hasMoreElements()) {
             String parameterName = contextParametersNames.nextElement();
 
-            parameters.put(StringEscapeUtils.escapeHtml4(parameterName),
+            contextParameters.put(StringEscapeUtils.escapeHtml4(parameterName),
                     StringEscapeUtils.escapeHtml4(servletContext.getInitParameter(parameterName)));
         }
 
@@ -31,7 +32,7 @@ class HtmlCreator {
         while (servletParametersNames.hasMoreElements()) {
             String parameterName = servletParametersNames.nextElement();
 
-            parameters.put(StringEscapeUtils.escapeHtml4(parameterName),
+            servletParameters.put(StringEscapeUtils.escapeHtml4(parameterName),
                     StringEscapeUtils.escapeHtml4(servlet.getInitParameter(parameterName)));
         }
 
@@ -64,7 +65,16 @@ class HtmlCreator {
                     <tbody>
                 """);
 
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+        for (Map.Entry<String, String> entry : contextParameters.entrySet()) {
+            writer.println("""
+                        <tr>
+                            <td>%s</td>
+                            <td>%s</td>
+                        </tr>
+                    """.formatted(entry.getKey(), entry.getValue()));
+        }
+
+        for (Map.Entry<String, String> entry : servletParameters.entrySet()) {
             writer.println("""
                         <tr>
                             <td>%s</td>
